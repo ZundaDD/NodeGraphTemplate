@@ -9,9 +9,9 @@ namespace MikanLab.NodeGraph
     [CustomGraphWindow(typeof(NodeGraph))]
     public class NodeGraphWindow : EditorWindow
     {
-        private static readonly string prefKey = "MikanLab_Node_Graph_Window";
-        private bool ifInited = false;
-        private bool ifFirst = true;
+        protected static readonly string prefKey = "MikanLab_Node_Graph_Window";
+        protected bool ifInited = false;
+        protected bool ifFirst = true;
         protected NodeGraph target;
         protected Setting setting;
         protected Toolbar toolbar;
