@@ -32,4 +32,6 @@ namespace MikanLab.NodeGraph
         public uint Max = 10000;
         public uint Min = 0;
     }
+
+    
 }

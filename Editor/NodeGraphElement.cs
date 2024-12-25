@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 
 namespace MikanLab.NodeGraph
 {
+    [CustomGraphView(typeof(NodeGraph))]
     public class NodeGraphElement : GraphView
     {
         
@@ -214,5 +215,18 @@ namespace MikanLab.NodeGraph
         }
 
         public virtual void Execute() { }
+    }
+
+    /// <summary>
+    /// 节点图适用的视图，默认为NodeGraphElement
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class CustomGraphViewAttribute : Attribute
+    {
+        public Type Type;
+        public CustomGraphViewAttribute(Type viewType) 
+        {
+            this.Type = viewType;
+        }
     }
 }

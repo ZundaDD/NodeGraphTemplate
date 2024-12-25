@@ -6,14 +6,16 @@ using UnityEditor.UIElements;
 
 namespace MikanLab.NodeGraph
 {
-    public class GraphWindow<TGraph,TView> : EditorWindow where TGraph : NodeGraph where TView : NodeGraphElement, new()
+    [CustomGraphWindow(typeof(NodeGraph))]
+    public class GraphWindow : EditorWindow
     {
-        private static readonly string prefKey = "MikanLab" + typeof(TGraph).Name + typeof(TView).Name;
+        private static readonly string prefKey = "MikanLab_Node_Graph_Window";
         private bool ifInited = false;
         private bool ifFirst = true;
-        private TGraph target;
-        private Setting setting;
-        private Toolbar toolbar;
+        protected NodeGraph target;
+        protected Setting setting;
+        protected Toolbar toolbar;
+        protected NodeGraphElement graph;
 
         #region 偏好设置
         [Serializable]
@@ -28,22 +30,24 @@ namespace MikanLab.NodeGraph
         #endregion
 
         #region 生命周期
-        public static void Invoke(TGraph target)
+        public static void Invoke(NodeGraph target)
         {
-            var window = GetWindow<GraphWindow<TGraph,TView>>("NodeGraphWindow");
+            var window = GetWindow<GraphWindow>("NodeGraphWindow");
             if (!window.ifInited)
             {
                 window.target = target;
+
                 if (!EditorPrefs.HasKey(prefKey)) window.setting = new();
                 else window.setting = JsonUtility.FromJson<Setting>(EditorPrefs.GetString(prefKey));
                 window.FromPref();
+
                 window.AddElements();
                 window.ifInited = true;
                 window.ifFirst = false;
             }
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             if (!ifInited && !ifFirst)
             {
@@ -56,13 +60,13 @@ namespace MikanLab.NodeGraph
             }
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             SavePref();
             SaveGraph();
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             ifInited = false;
             SavePref();
@@ -70,40 +74,28 @@ namespace MikanLab.NodeGraph
         }
         #endregion
 
-        #region 元素组件
-        private NodeGraphElement graph;
-        private NodeGraphElement Graph
-        {
-            get
-            {
-                if (graph == null)
-                {
-                    graph = new TView() { style = { flexGrow = 1 } };
-                    graph.Bind(target);
-                    graph.LoadFromAsset();
-                }
-                return graph;
-            }
-
-        }
-
-        #endregion
 
         #region 绘制控制
-        private void AddElements()
+        protected virtual void AddElements()
         {
             toolbar = new();
             toolbar.style.flexDirection = FlexDirection.Row;
+            
+
             rootVisualElement.Add(toolbar);
 
-            rootVisualElement.Add(Graph);
+            graph = Activator.CreateInstance( EditorUtilities.GetGraphView(target.GetType())) as NodeGraphElement;
+            graph.Bind(target);
+            graph.style.flexGrow = 1;
+            graph.LoadFromAsset();
+            rootVisualElement.Add(graph);
 
             //工具栏
-            toolbar.Add(new ToolbarButton(Graph.Execute) { text = "测试" });
+            toolbar.Add(new ToolbarButton(graph.Execute) { text = "测试" });
 
         }
 
-        private void FromPref()
+        protected virtual void FromPref()
         {
             position = new(setting.position_x, setting.position_y, setting.width, setting.height);
         }
@@ -130,5 +122,12 @@ namespace MikanLab.NodeGraph
             EditorPrefs.SetString(prefKey, JsonUtility.ToJson(setting));
         }
         #endregion
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class CustomGraphWindowAttribute : Attribute
+    {
+        public Type Type;
+        public CustomGraphWindowAttribute(Type type) => this.Type = type;
     }
 }
