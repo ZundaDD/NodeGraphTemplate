@@ -3,13 +3,16 @@ using UnityEditor;
 using UnityEngine.UIElements;
 using System;
 using UnityEditor.UIElements;
+using UnityEditor.PackageManager.UI;
 
 namespace MikanLab.NodeGraph
 {
     [CustomGraphWindow(typeof(NodeGraph))]
     public class NodeGraphWindow : EditorWindow
     {
-        protected static readonly string prefKey = "MikanLab_Node_Graph_Window";
+        protected virtual string prefKey => "MikanLab_Node_Graph_Window";
+        protected virtual Type prefType => typeof(Setting);
+
         protected bool ifInited = false;
         protected bool ifFirst = true;
         protected NodeGraph target;
@@ -33,56 +36,49 @@ namespace MikanLab.NodeGraph
         {
             var window = GetWindow<NodeGraphWindow>("NodeGraphWindow");
             if (!window.ifInited)
-            {
+            {   
                 window.target = target;
-
-                if (!EditorPrefs.HasKey(prefKey)) window.setting = new();
-                else window.setting = JsonUtility.FromJson<Setting>(EditorPrefs.GetString(prefKey));
-                window.FromPref();
-
-                window.AddElements();
-                window.ifInited = true;
-                window.ifFirst = false;
+                window.SetLayout(window.prefKey, window.prefType);
             }
         }
 
         protected virtual void OnEnable()
         {
-            if (!ifInited && !ifFirst)
-            {
-                if (!EditorPrefs.HasKey(prefKey)) setting = new();
-                else setting = JsonUtility.FromJson<Setting>(EditorPrefs.GetString(prefKey));
-                FromPref();
-                AddElements();
-                ifInited = true;
-                ifFirst = false;
-            }
+            if (!ifInited && !ifFirst) SetLayout(prefKey, prefType);
         }
 
         protected virtual void OnDestroy()
         {
-            SavePref();
+            SavePref(prefKey);
             SaveGraph();
         }
 
         protected virtual void OnDisable()
         {
             ifInited = false;
-            SavePref();
+            SavePref(prefKey);
             SaveGraph();
         }
         #endregion
 
-        #region 绘制控制
+        #region 绘制布局
+        protected virtual void SetLayout(string prefkey,Type prefType)
+        {
+            setting = ReadPref(prefkey, prefType);
+            SetFromPref();
+            AddElements();
+            ifInited = true;
+            ifFirst = false;
+        }
+
         protected virtual void AddElements()
         {
             toolbar = new();
             toolbar.style.flexDirection = FlexDirection.Row;
             
-
             rootVisualElement.Add(toolbar);
 
-            graph = Activator.CreateInstance( EditorUtilities.GetGraphView(target.GetType())) as NodeGraphView;
+            graph = Activator.CreateInstance(EditorUtilities.GetGraphView(target.GetType())) as NodeGraphView;
             graph.Bind(target);
             graph.style.flexGrow = 1;
             graph.LoadFromAsset();
@@ -93,7 +89,7 @@ namespace MikanLab.NodeGraph
 
         }
 
-        protected virtual void FromPref()
+        protected virtual void SetFromPref()
         {
             position = new(setting.position_x, setting.position_y, setting.width, setting.height);
         }
@@ -111,13 +107,19 @@ namespace MikanLab.NodeGraph
             AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
         }
 
-        protected virtual void SavePref()
+        protected virtual void SavePref(string keyname)
         {
             setting.width = position.width;
             setting.height = position.height;
             setting.position_x = position.x;
             setting.position_y = position.y;
-            EditorPrefs.SetString(prefKey, JsonUtility.ToJson(setting));
+            EditorPrefs.SetString(keyname, JsonUtility.ToJson(setting));
+        }
+
+        protected virtual Setting ReadPref(string keyname,Type settingType)
+        {
+            if (!EditorPrefs.HasKey(keyname)) return Activator.CreateInstance(settingType) as Setting;
+            else return JsonUtility.FromJson(EditorPrefs.GetString(keyname), settingType) as Setting;
         }
         #endregion
     }
