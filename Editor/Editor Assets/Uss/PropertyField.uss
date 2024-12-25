@@ -1,0 +1,16 @@
+.unity-property-field {
+    flex-direction: row; /* 确保标签和输入框水平排列 */
+    align-items: center; /* 垂直居中对齐标签和输入框 */
+}
+
+.unity-property-field .unity-base-field > .unity-label {
+    min-width: 40px; /* 设置标签最小宽度，根据需要调整 */
+    max-width: 200px;
+    width: auto;
+    margin-right: 5px; /* 调整标签和输入框之间的间距，根据需要调整 */
+    flex-shrink: 0; /* 防止标签收缩 */
+}
+
+.unity-property-field .unity-text-element--inner-input-field-component {
+    flex-grow: 0; /* 让输入框占据剩余空间 */
+}

@@ -1,0 +1,16 @@
+{
+    "name": "MikanLab.NodeGraphTemplate.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:721baddc6a6592b4a960b8a7122c05df"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

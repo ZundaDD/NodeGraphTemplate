@@ -1,0 +1,13 @@
+﻿.Mikan-Property-Box
+{
+    min-width: 75px;
+    max-height:120px;
+    max-width: 200px;
+	width: auto;
+    height: auto;
+    background-color: gray;
+    position: absolute;
+    border-width: 1px;
+    border-color: white;
+    border-radius: 5px;
+}
