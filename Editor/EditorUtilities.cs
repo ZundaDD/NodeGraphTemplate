@@ -72,14 +72,93 @@ namespace MikanLab.NodeGraph
             return target.IsAssignableFrom(origin);
         }
 
+        
+        #endregion
+
+        #region 节点类型获取
+        private static List<Type> allNodes;
+        private static Dictionary<Type, List<Type>> graphNodes;
+        private static Dictionary<Type, Dictionary<Type, uint>> nodeMax;
+
+        /// <summary>
+        /// 获取节点图可添加的节点
+        /// </summary>
+        /// <param name="type">节点图类型</param>
+        /// <returns></returns>
+        public static List<Type> GetGraphValideNode(System.Type type)
+        {
+            if (graphNodes == null) graphNodes = new();
+            if (!graphNodes.ContainsKey(type))
+            {
+                SearchNode(type);
+            }
+            return graphNodes[type];
+        }
+
+        /// <summary>
+        /// 获取节点图的节点个数限制
+        /// </summary>
+        /// <param name="type">节点图类型</param>
+        /// <returns></returns>
+        public static Dictionary<System.Type, uint> GetGraphLimit(System.Type type)
+        {
+            if (nodeMax == null) nodeMax = new();
+            if (!nodeMax.ContainsKey(type))
+            {
+                SearchLimit(type);
+            }
+            return nodeMax[type];
+
+        }
+
+        /// <summary>
+        /// 寻找节点图可添加的节点
+        /// </summary>
+        /// <param name="type">节点图类型</param>
+        private static void SearchNode(System.Type type)
+        {
+            if (allNodes == null) InitDict();
+            graphNodes[type] = new();
+            foreach (var node in allNodes)
+            {
+                if (node.IsDefined(typeof(UniversalUsedAttribute), true))
+                {
+                    graphNodes[type].Add(node);
+                    continue;
+                }
+                foreach (var attr in node.GetCustomAttributes(typeof(UsedForAttribute), true))
+                {
+                    var attrs = attr as UsedForAttribute;
+                    if (!attrs.AllowInherit && attrs.GraphType != type) continue;
+                    if (attrs.AllowInherit && type != attrs.GraphType && !type.IsSubclassOf(attrs.GraphType)) continue;
+                    graphNodes[type].Add(node);
+                }
+            }
+        }
+
+
+        private static void SearchLimit(System.Type type)
+        {
+            if (nodeMax == null) nodeMax = new();
+            nodeMax[type] = new();
+            foreach (var attr in type.GetCustomAttributes(typeof(CountLimitAttribute), true))
+            {
+                var attrs = attr as CountLimitAttribute;
+                nodeMax[type][attrs.NodeType] = attrs.Max;
+            }
+        }
+        #endregion
+
+        #region 反射
         private static void InitDict()
         {
             nodeDrawers = new();
             graphWindows = new();
             graphViews = new();
+            allNodes = new();
             nodeDrawers.Add(typeof(BaseNode), typeof(NodeDrawer));
-            graphWindows.Add(typeof(NodeGraph),typeof(NodeGraphWindow));
-            graphViews.Add(typeof(NodeGraph),typeof(NodeGraphView));
+            graphWindows.Add(typeof(NodeGraph), typeof(NodeGraphWindow));
+            graphViews.Add(typeof(NodeGraph), typeof(NodeGraphView));
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -89,7 +168,7 @@ namespace MikanLab.NodeGraph
                     if (type.IsSubclassOf(typeof(NodeGraphView)))
                     {
                         var attr = type.GetCustomAttributes(typeof(CustomGraphViewAttribute), false) as CustomGraphViewAttribute[];
-                        if(attr == null || attr.Length == 0) continue;
+                        if (attr == null || attr.Length == 0) continue;
                         else
                         {
                             graphViews.Add(attr[0].Type, type);
@@ -106,7 +185,7 @@ namespace MikanLab.NodeGraph
                         }
                     }
                     //处理窗口
-                    else if(type.IsSubclassOf(typeof(NodeGraphWindow)))
+                    else if (type.IsSubclassOf(typeof(NodeGraphWindow)))
                     {
                         var attr = type.GetCustomAttributes(typeof(CustomGraphWindowAttribute), false) as CustomGraphWindowAttribute[];
                         if (attr == null || attr.Length == 0) continue;
@@ -114,6 +193,10 @@ namespace MikanLab.NodeGraph
                         {
                             graphWindows.Add(attr[0].Type, type);
                         }
+                    }
+                    else if (type.IsClass && !type.IsAbstract && (type.IsSubclassOf(typeof(BaseNode))))
+                    {
+                        allNodes.Add(type);
                     }
                 }
             }

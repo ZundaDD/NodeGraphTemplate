@@ -21,11 +21,11 @@ namespace MikanLab.NodeGraph
         {
 
             var entries = new List<SearchTreeEntry>();
-            var limitDict = GraphUtilities.GetGraphLimit(graphView.target.GetType());
+            var limitDict = EditorUtilities.GetGraphLimit(graphView.target.GetType());
 
             entries.Add(new SearchTreeGroupEntry(new GUIContent("Create Node")));
 
-            foreach (var nodeType in GraphUtilities.GetGraphValideNode(graphView.target.GetType()))
+            foreach (var nodeType in EditorUtilities.GetGraphValideNode(graphView.target.GetType()))
             {
                 //上限检测
                 if (limitDict.ContainsKey(nodeType))
