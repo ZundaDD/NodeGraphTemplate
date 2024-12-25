@@ -1,0 +1,14 @@
+{
+  "name": "com.mikanlab.node_graph_template",
+  "displayName": "Node Graph Template",
+  "version": "1.0.0",
+  "description": "Provide a pre-made template to build assets",
+  "unity": "2022.3",
+  "dependencies": {
+    
+  },
+  "author": {
+    "name": "Hasekawa Mikan",
+    "email": "jenxnka@gamail.com"
+  }
+}
