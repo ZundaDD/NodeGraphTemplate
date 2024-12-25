@@ -12,12 +12,11 @@ namespace MikanLab.NodeGraph
     /// </summary>
     public class NodeGraph : ScriptableObject
     {
-        #region 序列化
         /// <summary>
         /// 节点列表
         /// </summary>
         [SerializeReference] public List<BaseNode> NodeList = new();
-        #endregion
+
 
         /// <summary>
         /// 满足节点最少数量需求

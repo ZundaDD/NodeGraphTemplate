@@ -48,7 +48,7 @@ namespace MikanLab.NodeGraph
         public void DrawNode()
         {
             var drawerType = EditorUtilities.GetNodeDrawers(Data.GetType());
-            var newDrawer = Activator.CreateInstance(drawerType) as NodeElementDrawer;
+            var newDrawer = Activator.CreateInstance(drawerType) as NodeDrawer;
             newDrawer.Bind(serializedProperty, this);
             newDrawer.OnDrawer();
 

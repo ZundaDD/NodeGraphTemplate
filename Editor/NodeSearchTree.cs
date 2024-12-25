@@ -9,10 +9,10 @@ namespace MikanLab.NodeGraph
 {
     public class NodeSeracher : ScriptableObject, ISearchWindowProvider
     {
-        private NodeGraphElement graphView;
+        private NodeGraphView graphView;
 
 
-        public void Initialize(NodeGraphElement graphView)
+        public void Initialize(NodeGraphView graphView)
         {
             this.graphView = graphView;
         }

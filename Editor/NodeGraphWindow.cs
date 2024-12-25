@@ -7,7 +7,7 @@ using UnityEditor.UIElements;
 namespace MikanLab.NodeGraph
 {
     [CustomGraphWindow(typeof(NodeGraph))]
-    public class GraphWindow : EditorWindow
+    public class NodeGraphWindow : EditorWindow
     {
         private static readonly string prefKey = "MikanLab_Node_Graph_Window";
         private bool ifInited = false;
@@ -15,7 +15,7 @@ namespace MikanLab.NodeGraph
         protected NodeGraph target;
         protected Setting setting;
         protected Toolbar toolbar;
-        protected NodeGraphElement graph;
+        protected NodeGraphView graph;
 
         #region 偏好设置
         [Serializable]
@@ -32,7 +32,7 @@ namespace MikanLab.NodeGraph
         #region 生命周期
         public static void Invoke(NodeGraph target)
         {
-            var window = GetWindow<GraphWindow>("NodeGraphWindow");
+            var window = GetWindow<NodeGraphWindow>("NodeGraphWindow");
             if (!window.ifInited)
             {
                 window.target = target;
@@ -74,7 +74,6 @@ namespace MikanLab.NodeGraph
         }
         #endregion
 
-
         #region 绘制控制
         protected virtual void AddElements()
         {
@@ -84,7 +83,7 @@ namespace MikanLab.NodeGraph
 
             rootVisualElement.Add(toolbar);
 
-            graph = Activator.CreateInstance( EditorUtilities.GetGraphView(target.GetType())) as NodeGraphElement;
+            graph = Activator.CreateInstance( EditorUtilities.GetGraphView(target.GetType())) as NodeGraphView;
             graph.Bind(target);
             graph.style.flexGrow = 1;
             graph.LoadFromAsset();

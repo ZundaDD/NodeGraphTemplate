@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 namespace MikanLab.NodeGraph
 {
     [GraphDrawer(typeof(BaseNode))]
-    public class NodeElementDrawer
+    public class NodeDrawer
     {
         public SerializedProperty property;
         protected VisualNode visualNode;

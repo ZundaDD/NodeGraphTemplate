@@ -31,7 +31,7 @@ namespace MikanLab.NodeGraph
 
         public static Type GetGraphView(Type type)
         {
-            if (!type.IsSubclassOf(typeof(NodeGraph))) throw new Exception("Invalid Query!");
+            if (!type.IsAssignableTo(typeof(NodeGraph))) throw new Exception("Invalid Query!");
             if (graphViews == null) InitDict();
             while (!graphViews.ContainsKey(type))
             {
@@ -47,7 +47,7 @@ namespace MikanLab.NodeGraph
 
         public static Type GetGrpahWindow(Type type)
         {
-            if (!type.IsSubclassOf(typeof(NodeGraph))) throw new Exception("Invalid Query!");
+            if (!type.IsAssignableTo(typeof(NodeGraph))) throw new Exception("Invalid Query!");
             if (graphWindows == null) InitDict();
             while (!graphWindows.ContainsKey(type))
             {
@@ -61,21 +61,32 @@ namespace MikanLab.NodeGraph
             return graphWindows[type];
         }
 
+        /// <summary>
+        /// 能否将当前类实例赋值给目标类引用
+        /// </summary>
+        /// <param name="origin">当前类</param>
+        /// <param name="target">目标类</param>
+        /// <returns></returns>
+        public static bool IsAssignableTo(this Type origin, Type target)
+        {
+            return target.IsAssignableFrom(origin);
+        }
+
         private static void InitDict()
         {
             nodeDrawers = new();
             graphWindows = new();
             graphViews = new();
-            nodeDrawers.Add(typeof(BaseNode), typeof(NodeElementDrawer));
-            graphWindows.Add(typeof(NodeGraph),typeof(GraphWindow));
-            graphViews.Add(typeof(NodeGraph),typeof(NodeGraphElement));
+            nodeDrawers.Add(typeof(BaseNode), typeof(NodeDrawer));
+            graphWindows.Add(typeof(NodeGraph),typeof(NodeGraphWindow));
+            graphViews.Add(typeof(NodeGraph),typeof(NodeGraphView));
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
                 {
                     //处理视图
-                    if (type.IsSubclassOf(typeof(NodeGraphElement)))
+                    if (type.IsSubclassOf(typeof(NodeGraphView)))
                     {
                         var attr = type.GetCustomAttributes(typeof(CustomGraphViewAttribute), false) as CustomGraphViewAttribute[];
                         if(attr == null || attr.Length == 0) continue;
@@ -85,7 +96,7 @@ namespace MikanLab.NodeGraph
                         }
                     }
                     //处理绘制器
-                    else if (type.IsSubclassOf(typeof(NodeElementDrawer)))
+                    else if (type.IsSubclassOf(typeof(NodeDrawer)))
                     {
                         var attr = type.GetCustomAttributes(typeof(GraphDrawerAttribute), false) as GraphDrawerAttribute[];
                         if (attr == null || attr.Length == 0) continue;
@@ -95,7 +106,7 @@ namespace MikanLab.NodeGraph
                         }
                     }
                     //处理窗口
-                    else if(type.IsSubclassOf(typeof(GraphWindow)))
+                    else if(type.IsSubclassOf(typeof(NodeGraphWindow)))
                     {
                         var attr = type.GetCustomAttributes(typeof(CustomGraphWindowAttribute), false) as CustomGraphWindowAttribute[];
                         if (attr == null || attr.Length == 0) continue;
@@ -116,10 +127,10 @@ namespace MikanLab.NodeGraph
             string path = AssetDatabase.GetAssetPath(instanceID);
             Type type = AssetDatabase.GetMainAssetTypeAtPath(path);
 
-            if(type.IsSubclassOf(typeof(NodeGraph)))
+            if(type == typeof(NodeGraph) || type.IsSubclassOf(typeof(NodeGraph)))
             {
                 var windowtype = EditorUtilities.GetGrpahWindow(type);
-                windowtype.InvokeMember("Invoke", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public, null, null,
+                windowtype.InvokeMember("Invoke", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, null,
                     new object[] { AssetDatabase.LoadAssetAtPath<NodeGraph>(path) });
                 return true;
             }

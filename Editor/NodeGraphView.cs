@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 namespace MikanLab.NodeGraph
 {
     [CustomGraphView(typeof(NodeGraph))]
-    public class NodeGraphElement : GraphView
+    public class NodeGraphView : GraphView
     {
         
         protected List<VisualNode> vnodeList = new();
@@ -19,11 +19,9 @@ namespace MikanLab.NodeGraph
         public Dictionary<Type, int> nodeCache = new();
 
         //配置部分
-        public NodeGraphElement(NodeGraph target) : base()
+        public NodeGraphView() : base()
         {
             //交互操作
-            //AddToClassList("Mikan-graph-view");
-            //styleSheets.Add(GUIUtilities.GraphViewColored);
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new RectangleSelector());
@@ -42,7 +40,7 @@ namespace MikanLab.NodeGraph
             
         }
 
-        public void Bind(NodeGraph target)
+        public virtual void Bind(NodeGraph target)
         {
             target.MeetNodeLimit();
             this.target = target;
@@ -218,7 +216,7 @@ namespace MikanLab.NodeGraph
     }
 
     /// <summary>
-    /// 节点图适用的视图，默认为NodeGraphElement
+    /// 节点图适用的视图，默认为NodeGraphView
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class CustomGraphViewAttribute : Attribute
