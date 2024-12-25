@@ -100,7 +100,7 @@ namespace MikanLab.NodeGraph
         #endregion
 
         #region 保存
-        protected virtual void SaveGraph()
+        private void SaveGraph()
         {
             if (target == null) return;
             if (graph == null) return;
@@ -111,7 +111,7 @@ namespace MikanLab.NodeGraph
             AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(target));
         }
 
-        private void SavePref()
+        protected virtual void SavePref()
         {
             setting.width = position.width;
             setting.height = position.height;
