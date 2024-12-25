@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace MikanLab.NodeGraph
 {
-    [GraphDrawer(typeof(BaseNode))]
+    [CustomNodeDrawer(typeof(BaseNode))]
     public class NodeDrawer
     {
         public SerializedProperty property;
@@ -25,9 +25,9 @@ namespace MikanLab.NodeGraph
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false,Inherited = false)]
-    public class GraphDrawerAttribute : Attribute
+    public class CustomNodeDrawerAttribute : Attribute
     {
         public Type Type;
-        public GraphDrawerAttribute(Type type) => this.Type = type;
+        public CustomNodeDrawerAttribute(Type type) => this.Type = type;
     }
 }

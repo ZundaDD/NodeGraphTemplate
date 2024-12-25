@@ -25,7 +25,6 @@ namespace MikanLab.NodeGraph
             public float height = 300f;
             public float position_x = 0f;
             public float position_y = 0f;
-            public bool propertyWindowOn = false;
         }
         #endregion
 

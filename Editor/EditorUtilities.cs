@@ -177,7 +177,7 @@ namespace MikanLab.NodeGraph
                     //处理绘制器
                     else if (type.IsSubclassOf(typeof(NodeDrawer)))
                     {
-                        var attr = type.GetCustomAttributes(typeof(GraphDrawerAttribute), false) as GraphDrawerAttribute[];
+                        var attr = type.GetCustomAttributes(typeof(CustomNodeDrawerAttribute), false) as CustomNodeDrawerAttribute[];
                         if (attr == null || attr.Length == 0) continue;
                         else
                         {
