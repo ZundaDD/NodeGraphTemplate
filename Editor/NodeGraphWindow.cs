@@ -100,7 +100,7 @@ namespace MikanLab.NodeGraph
         #endregion
 
         #region 保存
-        private void SaveGraph()
+        protected virtual void SaveGraph()
         {
             if (target == null) return;
             if (graph == null) return;
