@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MikanLab.NodeGraph
 {
-    [CreateAssetMenu(fileName = "NodeGraph",menuName = "MikanLab/NodeGraph")]
+    [CreateAssetMenu(fileName = "NodeGraph",menuName = "MikanLab/NodeGraph/NodeGraph")]
     [Serializable]
     /// <summary>
     /// 最基本的节点图

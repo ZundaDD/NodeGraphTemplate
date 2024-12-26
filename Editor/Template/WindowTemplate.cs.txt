@@ -1,0 +1,43 @@
+using System;
+using MikanLab.NodeGraph;
+
+public class #FILENAME# : NodeGraphWindow
+{
+    protected override string prefKey => "NodeGraph_#FILENAME#";
+    protected override Type prefType => typeof(#FILENAME#.Setting);
+
+    [Serializable]
+    public new class Setting : NodeGraphWindow.Setting
+    {
+        //在这里添加独特的偏好设置
+        //如果没有的话，可以删除此类，以及上方的prefType和下方的SetFromPref和SavePref函数
+    }
+        
+    public new static void Invoke(NodeGraph target)
+    {
+        var window = GetWindow<#FILENAME#>("#FILENAME#");
+        if (!window.ifInited)
+        {
+            window.target = target;
+            window.SetLayout(window.prefKey, window.prefType);
+        }
+    }
+
+    protected override void AddElements()
+    {
+        base.AddElements();
+        //在这里添加额外的元素
+    }
+
+    protected override void SetFromPref()
+    {
+        base.SetFromPref();
+        //在这里应用额外偏好设置
+    }
+
+    protected override void SavePref(string keyname)
+    {
+        //在这里保存额外偏好字段
+        base.SavePref(keyname);
+    }
+}

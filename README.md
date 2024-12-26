@@ -6,6 +6,7 @@
 NodeGraphWindow进行拓展。直接继承这些类就可以获取其所有职能，不要忘记定义[CustomGraphView]和[CustomGraphWindow]
 来指定视图和窗口应用的图对象。</br>
 
+---
 定义节点的流程很简单，只需要在构造函数中设定好节点名称、端口信息，然后定义相关属性：[UsedFor]用于指出能使用该节点的图类型，
 [UniversalUsed]使节点在任何图中被检测到，然后可以通过重写Execute方式来补充该节点的遍历法则。
 ```
@@ -39,6 +40,10 @@ class ItemDrawer : NodeDrawer
     }
 }
 ```
+
+---
+如果需要对窗口进行拓展，可以通过Create->MikanLab->NodeGraph->WindosTemplate中创建脚本模板，其中提供了较为详细
+的拓展引导。
 ## 其他
 如果您在使用过程中发现问题或者觉得有可以改进的地方，可以在Issues板块中提出。</br>
 
